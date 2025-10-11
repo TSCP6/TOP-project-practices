@@ -1,0 +1,3 @@
+[submodule "TOP-project-practices/rock-paper-scissors"]
+	path = TOP-project-practices/rock-paper-scissors
+	url = https://github.com/TSCP6/rock-paper-scissors.git
