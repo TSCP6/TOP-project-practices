@@ -1,0 +1,16 @@
+.container {
+    width: 480px;
+    height: 480px;
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid black;
+}
+
+.cell-grid {
+    box-sizing: border-box; /*元素的内边距和边框都在网格内*/
+    border: 1px solid black;
+}
+
+.hover-cell{
+    background-color: rgba(0, 0, 0, 1);
+}
