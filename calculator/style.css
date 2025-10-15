@@ -10,7 +10,7 @@
     font-size: 20px;
 }
 
-.btns .clear-btn,.equal-btn{
+.btns .equal-btn{
     grid-row: span 2;
     height: 102px;
 }
