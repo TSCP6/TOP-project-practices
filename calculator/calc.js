@@ -3,6 +3,7 @@ const op_btns = document.querySelectorAll(".op-btn");
 const equal_btn = document.querySelector(".equal-btn");
 const clear_btn = document.querySelector(".clear-btn");
 const dec_btn = document.querySelector(".decimal-btn");
+const del_btn = document.querySelector('.delete-btn');
 const display_premenu = document.querySelector(".pre-display");
 const display_nowmenu = document.querySelector(".now-display")
 
@@ -30,6 +31,8 @@ function clear() {
   display_premenu.innerHTML = "";
   num1 = num2 = 0;
   op = null;
+  curInput = "0";
+  hasEqual = false;
 }
 
 function operate(num1, op, num2) {
@@ -56,92 +59,77 @@ function operate(num1, op, num2) {
 }
 
 let num1 = 0,
-  num2 = 0,
   op = null,
-  isStart = true,
-  inputOp = false,
-  inputNum = false,
-  hasEqual = false,
-  isDec = false,
-  hasDecPoint = false;
+  curInput = "0",
+  hasEqual = false;
 
 function assign() {
-  let num;
   number_btns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      num = btn.innerHTML;
+      const num = btn.innerHTML;
       if (hasEqual) {
-        display_premenu.innerHTML = "";
-        hasEqual = false;
+        clear();
       }
-      inputNum = true;
-      if (isDec) {
-        num2 += parseFloat(num / 10);
-      } else {
-        num2 = parseFloat(num2 * 10) + parseFloat(num);
+      if(curInput === "0"){
+        curInput = num;
+      }else {
+        curInput += num;
       }
-      display_nowmenu.innerHTML = num2;
+      display_nowmenu.innerHTML = curInput;
     });
   });
   op_btns.forEach((btn) => {
     btn.addEventListener("click", () => {
-      let curOp = btn.innerHTML;
+      const curOp = btn.innerHTML;
+      const num2 = parseFloat(curInput);
       if (hasEqual) {
         hasEqual = false;
-        inputNum = false;
-      }
-      if (isDec) isDec = false;
-      if (inputNum) {
-        if (op !== null) {
-          let res = operate(num1, op, num2);
-          num1 = res;
-          display_nowmenu.innerHTML =
-            Math.round(num1 * 1000000000000) / 1000000000000;
-        } else {
+      } else{
+        if(op !== null){
+          num1 = operate(num1 , op , num2);
+        }else {
           num1 = num2;
-          display_nowmenu.innerHTML = num1;
         }
-        num2 = 0;
       }
       op = curOp;
-      display_premenu.innerHTML = num1 + op;
-      inputNum = false;
+      const displayNum1 = Math.round(num1 * 100000000) / 100000000;
+      display_premenu.innerHTML = displayNum1 + op;
+      display_nowmenu.innerHTML = displayNum1;
+      curInput = "0"; 
     });
   });
   equal_btn.addEventListener("click", () => {
-    if (!hasEqual) {
-      if (op === null) {
-        display_premenu.innerHTML += num2 + "=";
-        num1 = num2;
-        display_nowmenu.innerHTML = num1;
-      } else {
-        display_premenu.innerHTML += num2 + "=";
-        let res = operate(num1, op, num2);
-        if (res === null) {
-          display_nowmenu.innerHTML = "ERROR 0";
-        } else {
-          num1 = res;
-          display_nowmenu.innerHTML =
-            Math.round(num1 * 1000000000000) / 1000000000000;
-        }
-      }
-      op = null;
-      num2 = 0;
-      inputNum = false;
-      hasEqual = true;
+    if(op === null || hasEqual) return;
+    const num2 = parseFloat(curInput);
+    display_premenu.innerHTML += " " + num2 + " =";
+    let res = operate(num1, op, num2);
+
+    if (res === null) {
+      display_nowmenu.innerHTML = "ERROR 0";
+    } else {
+      num1 = res; 
+      display_nowmenu.innerHTML = Math.round(res * 100000000) / 100000000;
     }
+    
+    op = null;
+    curInput = "0";
+    hasEqual = true;
   });
   dec_btn.addEventListener("click", () => {
-    isDec = true;
-    if (!hasDecPoint) {
-      display_nowmenu.innerHTML += ".";
-      hasDecPoint = true;
-    }
     if (hasEqual) {
-      num2 = 0;
-      display_nowmenu = num2 + ".";
+      clear();
+    }
+    if (!curInput.includes(".")) {
+      curInput += ".";
+      display_nowmenu.innerHTML = curInput;
     }
   });
+  del_btn.addEventListener('click',() => {
+    if(hasEqual) return;
+    curInput = curInput.slice(0,-1);
+    if(curInput === "") curInput = "0";
+    display_nowmenu.innerHTML = curInput;
+  })
 }
 
 clear_btn.addEventListener("click", clear);
